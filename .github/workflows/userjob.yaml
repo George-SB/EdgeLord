@@ -113,11 +113,19 @@ jobs:
       run: |
         mkdir -p $HOME/.config/dosyago/bbpro/pdfs
         mkdir -p $HOME/.config/dosyago/bbpro/chai
+  
+    - name: Verify server is responding
+      run: |
+        for i in {1..10}; do
+          echo "Checking localhost:8080..."
+          curl -k https://localhost:8080 && break
+          sleep 5
+        done
 
     - name: Start server & ngrok tunnel
       run: |
-        bbpro &
-        sleep 15
+        bbpro --port 8080 --host 0.0.0.0 &
+        sleep 20
         ngrok http https://localhost:8080 2> ngrok_output.txt &
         sleep 5
 
