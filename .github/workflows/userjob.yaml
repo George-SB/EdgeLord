@@ -114,20 +114,26 @@ jobs:
         mkdir -p $HOME/.config/dosyago/bbpro/pdfs
         mkdir -p $HOME/.config/dosyago/bbpro/chai
   
-    - name: Verify server is responding
-      run: |
-        for i in {1..10}; do
-          echo "Checking localhost:8080..."
-          curl -k https://localhost:8080 && break
-          sleep 5
-        done
-
-    - name: Start server & ngrok tunnel
+       
+    - name: Start server
       run: |
         bbpro --port 8080 --host 0.0.0.0 &
-        sleep 20
-        ngrok http https://localhost:8080 2> ngrok_output.txt &
-        sleep 5
+        echo "Waiting for server to initialize..."
+        sleep 25
+    
+    - name: Wait for server to respond
+      run: |
+        for i in {1..15}; do
+          echo "Checking localhost:8080 (attempt $i)..."
+          curl -s http://localhost:8080 && break
+          sleep 5
+        done
+    
+    - name: Start ngrok
+      run: |
+        ngrok http 8080 > ngrok_output.txt 2>&1 &
+        sleep 10
+
 
     - name: Set multiline environment variable
       run: |
