@@ -108,11 +108,16 @@ jobs:
       run: |
         random_string=$(openssl rand -base64 32) # Generate a random string
         echo "$random_string" > $HOME/BBPRO.INTEGRITY
+    
+    - name: Prepare bbpro directories
+      run: |
+        mkdir -p $HOME/.config/dosyago/bbpro/pdfs
+        mkdir -p $HOME/.config/dosyago/bbpro/chai
 
     - name: Start server & ngrok tunnel
       run: |
         bbpro &
-        sleep 5
+        sleep 15
         ngrok http https://localhost:8080 2> ngrok_output.txt &
         sleep 5
 
